@@ -1,0 +1,33 @@
+{
+    "name": "Horas Sindicales CCOO",
+    "short_name": "CCOOHoras",
+    "description": "Gestión de comunicaciones de horas sindicales para delegados CCOO en ACEINSA Conservación Villajoyosa",
+    "start_url": ".",
+    "display": "standalone",
+    "background_color": "#f4f4f9",
+    "theme_color": "#d32f2f",
+    "orientation": "portrait",
+    "icons": [
+        {
+            "src": "icon.svg",
+            "sizes": "any",
+            "type": "image/svg+xml",
+            "purpose": "any maskable"
+        },
+        {
+            "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='45' fill='%23d32f2f'/%3E%3Ctext x='50' y='60' font-size='30' text-anchor='middle' fill='white' font-family='Arial, sans-serif' font-weight='bold'%3ECCOO%3C/text%3E%3C/svg%3E",
+            "sizes": "any",
+            "type": "image/svg+xml",
+            "purpose": "any maskable"
+        }
+    ],
+    "screenshots": [
+        {
+            "src": "screenshot-1.png",
+            "sizes": "720x1280",
+            "type": "image/png",
+            "form_factor": "narrow",
+            "label": "Vista principal de la aplicación"
+        }
+    ]
+}

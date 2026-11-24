@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#d32f2f">
+    <meta name="description" content="Gestión de comunicaciones de horas sindicales para delegados CCOO ACEINSA">
+    <title>Horas Sindicales CCOO - ACEINSA</title>
+    <link rel="manifest" href="manifest.json">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="apple-touch-icon" href="icon.svg">
+    <link rel="icon" href="icon.svg" type="image/svg+xml">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="app-header">
+            <div class="header-content">
+                <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='45' fill='%23d32f2f'/%3E%3Ctext x='50' y='60' font-size='30' text-anchor='middle' fill='white' font-family='Arial, sans-serif'%3ECCOO%3C/text%3E%3C/svg%3E" alt="CCOO Logo" class="logo">
+                <div class="header-title">
+                    <h1>Horas Sindicales</h1>
+                    <p class="subtitle">ACEINSA Conservación Villajoyosa</p>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Form Section -->
+            <section class="form-section">
+                <h2>Comunicación de Horas Sindicales</h2>
+                
+                <form id="horasSindicalesForm" class="form-grid">
+                    <!-- Delegado -->
+                    <div class="form-group">
+                        <label for="delegado">Delegado/a CCOO</label>
+                        <input type="text" id="delegado" name="delegado" value="DAVID MARTINEZ" required>
+                    </div>
+
+                    <!-- Empresa -->
+                    <div class="form-group">
+                        <label for="empresa">Empresa</label>
+                        <input type="text" id="empresa" name="empresa" value="ACEINSA CONSERVACION VILLAJOYOSA" readonly>
+                    </div>
+
+                    <!-- Fecha -->
+                    <div class="form-group">
+                        <label for="fecha">Fecha de disfrute</label>
+                        <input type="date" id="fecha" name="fecha" required>
+                    </div>
+
+                    <!-- Modalidad -->
+                    <div class="form-group modalidad-group">
+                        <label>Modalidad</label>
+                        <div class="radio-group">
+                            <label class="radio-label">
+                                <input type="radio" name="modalidad" value="jornada_completa" checked>
+                                <span class="radio-custom"></span>
+                                <span>Toda la jornada</span>
+                            </label>
+                            <label class="radio-label">
+                                <input type="radio" name="modalidad" value="tramo_horario">
+                                <span class="radio-custom"></span>
+                                <span>Tramo horario</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Tramo Horario (oculto por defecto) -->
+                    <div id="tramoHorarioSection" class="tramo-section hidden">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="horaInicio">Hora inicio</label>
+                                <input type="time" id="horaInicio" name="horaInicio">
+                            </div>
+                            <div class="form-group">
+                                <label for="horaFin">Hora fin</label>
+                                <input type="time" id="horaFin" name="horaFin">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Observaciones -->
+                    <div class="form-group">
+                        <label for="observaciones">Observaciones (opcional)</label>
+                        <textarea id="observaciones" name="observaciones" rows="2" placeholder="Ej: Reunión con comité, atención a afiliados, etc."></textarea>
+                    </div>
+                </form>
+            </section>
+
+            <!-- Signature Section -->
+            <section class="signature-section">
+                <h2>Firma Digital</h2>
+                <p class="signature-instructions">
+                    Dibuje su firma con el dedo en el recuadro a continuación
+                </p>
+                
+                <div class="signature-container">
+                    <canvas id="signatureCanvas" class="signature-canvas"></canvas>
+                    <div class="signature-controls">
+                        <button type="button" id="clearSignature" class="btn btn-secondary">
+                            <span class="icon">🗑️</span> Limpiar
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Preview Section -->
+            <section class="preview-section hidden" id="previewSection">
+                <h2>Vista Previa del Documento</h2>
+                <div class="document-preview" id="documentPreview">
+                    <!-- El documento se generará dinámicamente -->
+                </div>
+            </section>
+
+            <!-- Actions Section -->
+            <section class="actions-section">
+                <div class="action-buttons">
+                    <button type="button" id="generatePreview" class="btn btn-primary">
+                        <span class="icon">👁️</span> Vista Previa
+                    </button>
+                    <button type="button" id="saveDraft" class="btn btn-secondary">
+                        <span class="icon">💾</span> Guardar Borrador
+                    </button>
+                    <button type="button" id="sendEmail" class="btn btn-primary">
+                        <span class="icon">✉️</span> Enviar Email
+                    </button>
+                    <button type="button" id="shareWhatsApp" class="btn btn-success">
+                        <span class="icon">📱</span> WhatsApp
+                    </button>
+                    <button type="button" id="shareDocument" class="btn btn-info">
+                        <span class="icon">📤</span> Compartir
+                    </button>
+                    <button type="button" id="printDocument" class="btn btn-secondary">
+                        <span class="icon">🖨️</span> Imprimir
+                    </button>
+                </div>
+            </section>
+
+            <!-- History Section -->
+            <section class="history-section">
+                <h2>Historial</h2>
+                <div class="history-controls">
+                    <button type="button" id="toggleHistory" class="btn btn-small">
+                        <span class="icon">📋</span> Mostrar/Ocultar Historial
+                    </button>
+                    <button type="button" id="exportHistory" class="btn btn-small btn-success">
+                        <span class="icon">📥</span> Exportar JSON
+                    </button>
+                    <button type="button" id="importHistory" class="btn btn-small btn-info">
+                        <span class="icon">📤</span> Importar JSON
+                    </button>
+                </div>
+                <div id="historyList" class="history-list hidden">
+                    <!-- Historial se cargará dinámicamente -->
+                </div>
+            </section>
+        </main>
+
+        <!-- Footer -->
+        <footer class="app-footer">
+            <p>CCOO Hábitat Alicante | Comissions Obreres de l'Hàbitat del País Valencià</p>
+            <p class="legal-text">Art. 68.e del Estatuto de los Trabajadores y Ley Orgánica 11/1985</p>
+        </footer>
+    </div>
+
+    <!-- Import Modal -->
+    <div id="importModal" class="modal hidden">
+        <div class="modal-content">
+            <h3>Importar Historial</h3>
+            <p>Pegue el contenido JSON del historial:</p>
+            <textarea id="importTextarea" rows="10" placeholder="Pegue aquí el JSON..."></textarea>
+            <div class="modal-actions">
+                <button type="button" id="cancelImport" class="btn btn-secondary">Cancelar</button>
+                <button type="button" id="confirmImport" class="btn btn-primary">Importar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast hidden"></div>
+
+    <script src="app.js"></script>
+</body>
+</html>
