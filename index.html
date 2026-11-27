@@ -31,59 +31,65 @@
                 <h2>Comunicación de Horas Sindicales</h2>
                 
                 <form id="horasSindicalesForm" class="form-grid">
-                    <!-- Delegado -->
+                    <p class="form-hint">Modelo oficial CCOO Hábitat PV — Solicitud de crédito sindical</p>
+
                     <div class="form-group">
-                        <label for="delegado">Delegado/a CCOO</label>
+                        <label for="lugar">Lugar de la comunicación</label>
+                        <input type="text" id="lugar" name="lugar" value="Villajoyosa" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="destinatario">Destinatario (A/A)</label>
+                        <input type="text" id="destinatario" name="destinatario" value="DIRECCIÓN DE ACEINSA CONSERVACIÓN VILLAJOYOSA" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="delegado">D/Dña. (delegado/a)</label>
                         <input type="text" id="delegado" name="delegado" value="DAVID MARTINEZ" required>
                     </div>
 
-                    <!-- Empresa -->
                     <div class="form-group">
                         <label for="empresa">Empresa</label>
                         <input type="text" id="empresa" name="empresa" value="ACEINSA CONSERVACION VILLAJOYOSA" readonly>
                     </div>
 
-                    <!-- Fecha -->
                     <div class="form-group">
-                        <label for="fecha">Fecha de disfrute</label>
+                        <label for="fecha">Fecha de disfrute del crédito sindical</label>
                         <input type="date" id="fecha" name="fecha" required>
                     </div>
 
-                    <!-- Modalidad -->
                     <div class="form-group modalidad-group">
-                        <label>Modalidad</label>
+                        <label>Modalidad (poner una X donde proceda)</label>
                         <div class="radio-group">
                             <label class="radio-label">
                                 <input type="radio" name="modalidad" value="jornada_completa" checked>
                                 <span class="radio-custom"></span>
-                                <span>Toda la jornada</span>
+                                <span>Toda la jornada laboral</span>
                             </label>
                             <label class="radio-label">
                                 <input type="radio" name="modalidad" value="tramo_horario">
                                 <span class="radio-custom"></span>
-                                <span>Tramo horario</span>
+                                <span>Desde las … h hasta las … h</span>
                             </label>
                         </div>
                     </div>
 
-                    <!-- Tramo Horario (oculto por defecto) -->
                     <div id="tramoHorarioSection" class="tramo-section hidden">
                         <div class="form-row">
                             <div class="form-group">
-                                <label for="horaInicio">Hora inicio</label>
+                                <label for="horaInicio">Desde las</label>
                                 <input type="time" id="horaInicio" name="horaInicio">
                             </div>
                             <div class="form-group">
-                                <label for="horaFin">Hora fin</label>
+                                <label for="horaFin">Hasta las</label>
                                 <input type="time" id="horaFin" name="horaFin">
                             </div>
                         </div>
                     </div>
 
-                    <!-- Observaciones -->
                     <div class="form-group">
-                        <label for="observaciones">Observaciones (opcional)</label>
-                        <textarea id="observaciones" name="observaciones" rows="2" placeholder="Ej: Reunión con comité, atención a afiliados, etc."></textarea>
+                        <label for="observaciones">Observaciones (opcional, no van en la plantilla oficial)</label>
+                        <textarea id="observaciones" name="observaciones" rows="2" placeholder="Uso interno: reunión, gestiones, etc."></textarea>
                     </div>
                 </form>
             </section>
@@ -160,7 +166,7 @@
         <!-- Footer -->
         <footer class="app-footer">
             <p>CCOO Hábitat Alicante | Comissions Obreres de l'Hàbitat del País Valencià</p>
-            <p class="legal-text">Art. 68.e del Estatuto de los Trabajadores y Ley Orgánica 11/1985</p>
+            <p class="legal-text">RD Legislativo 1/1995 (ET) · LO 11/1985 de Libertad Sindical · Plantilla CCOO Hàbitat PV</p>
         </footer>
     </div>
 

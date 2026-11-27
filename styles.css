@@ -863,6 +863,134 @@ select:focus-visible {
     color: var(--text-light);
 }
 
+.form-hint {
+    grid-column: 1 / -1;
+    margin: 0 0 0.5rem;
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+}
+
+/* Plantilla oficial CCOO Hàbitat */
+.document-preview .official-template {
+    font-family: Arial, Helvetica, sans-serif;
+    color: #111;
+    background: #fff;
+    padding: 1.25rem 1.5rem 2rem;
+}
+
+.document-preview .official-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 2rem;
+    border-bottom: none;
+}
+
+.document-preview .official-logo {
+    width: min(42%, 220px);
+    height: auto;
+}
+
+.document-preview .official-header-text {
+    text-align: right;
+    flex: 1;
+    padding-top: 0.25rem;
+}
+
+.document-preview .official-org {
+    font-weight: 700;
+    font-size: 0.95rem;
+    line-height: 1.25;
+}
+
+.document-preview .official-dept {
+    color: #666;
+    font-size: 0.9rem;
+    margin-top: 0.2rem;
+}
+
+.document-preview .official-body {
+    font-size: 0.98rem;
+    line-height: 1.55;
+}
+
+.document-preview .official-place-date {
+    text-align: center;
+    letter-spacing: 0.02em;
+    margin: 1.75rem 0 2rem;
+    font-weight: 600;
+}
+
+.document-preview .official-recipient,
+.document-preview .official-name {
+    margin: 0 0 1.25rem;
+}
+
+.document-preview .official-paragraph {
+    text-align: justify;
+    margin: 0 0 1rem;
+}
+
+.document-preview .official-instruction {
+    text-align: center;
+    font-size: 0.85rem;
+    margin: 0.75rem 0 1.25rem;
+}
+
+.document-preview .official-option {
+    margin: 0.85rem 0;
+    padding-left: 0.25rem;
+}
+
+.document-preview .official-x {
+    display: inline-block;
+    min-width: 1.4rem;
+    border-bottom: 1px solid #111;
+    text-align: center;
+    font-weight: 700;
+    margin-right: 0.35rem;
+}
+
+.document-preview .legal-cite {
+    margin-top: 1.75rem;
+}
+
+.document-preview .official-signature {
+    margin-top: 2.5rem;
+    max-width: 240px;
+}
+
+.document-preview .fdo-label {
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+
+.document-preview .official-signature .signature-image {
+    display: block;
+    max-width: 200px;
+    margin: 0.25rem 0 0.5rem;
+    border-bottom: 1px solid #333;
+}
+
+.document-preview .signature-line {
+    width: 180px;
+    height: 48px;
+    border-bottom: 1px solid #333;
+    margin-bottom: 0.5rem;
+}
+
+.document-preview .fdo-name {
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+@media print {
+    .official-template {
+        padding: 0 !important;
+    }
+}
+
 /* Signature Canvas Styling */
 .signature-canvas {
     background: var(--background-color);

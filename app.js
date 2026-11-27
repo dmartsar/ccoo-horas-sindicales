@@ -16,7 +16,7 @@ const STORAGE_KEYS = {
 
 const EMAIL_CONFIG = {
     to: ['rrhh@aceinsa.es', 'mjbustillo@aceinsa.es', 'jmolina@aceinsa.es', 'jmpiqueres@aceinsa.es'],
-    subject: 'Comunicación de Horas Sindicales - CCOO ACEINSA',
+    subject: 'Solicitud de crédito sindical - CCOO Hábitat / ACEINSA Conservación Villajoyosa',
     cc: '',
     bcc: ''
 };
@@ -306,6 +306,8 @@ function setupDate() {
 // ============================================
 function getFormData() {
     return {
+        lugar: document.getElementById('lugar').value,
+        destinatario: document.getElementById('destinatario').value,
         delegado: document.getElementById('delegado').value,
         empresa: document.getElementById('empresa').value,
         fecha: document.getElementById('fecha').value,
@@ -321,27 +323,29 @@ function getFormData() {
 
 function setFormData(data) {
     if (!data) return;
-    
+
+    document.getElementById('lugar').value = data.lugar || 'Villajoyosa';
+    document.getElementById('destinatario').value = data.destinatario || 'DIRECCIÓN DE ACEINSA CONSERVACIÓN VILLAJOYOSA';
     document.getElementById('delegado').value = data.delegado || 'DAVID MARTINEZ';
     document.getElementById('empresa').value = data.empresa || 'ACEINSA CONSERVACION VILLAJOYOSA';
     document.getElementById('fecha').value = data.fecha || new Date().toISOString().split('T')[0];
-    
+
     if (data.modalidad) {
         const radio = document.querySelector(`input[name="modalidad"][value="${data.modalidad}"]`);
         if (radio) radio.checked = true;
     }
-    
+
     document.getElementById('horaInicio').value = data.horaInicio || '';
     document.getElementById('horaFin').value = data.horaFin || '';
     document.getElementById('observaciones').value = data.observaciones || '';
-    
+
     if (data.firma) {
         appState.signature = data.firma;
         redrawSignature();
     } else {
         clearCanvas();
     }
-    
+
     updateTramoSection();
     updateFormState();
 }
@@ -395,9 +399,9 @@ function autoSaveDraft() {
 function validateForm(showMessage = false) {
     const formData = getFormData();
     
-    if (!formData.delegado || !formData.fecha) {
+    if (!formData.delegado || !formData.fecha || !formData.lugar || !formData.destinatario) {
         if (showMessage) {
-            showToast('Debes completar el nombre y la fecha', 'error');
+            showToast('Completa lugar, destinatario, nombre y fecha', 'error');
         }
         return false;
     }
@@ -441,88 +445,83 @@ function generatePreview() {
     showToast('Vista previa generada', 'success');
 }
 
+function parseSpanishDateParts(dateStr) {
+    const date = new Date(dateStr + 'T00:00:00');
+    const day = date.getDate();
+    const month = date.toLocaleDateString('es-ES', { month: 'long' });
+    const year = date.getFullYear();
+    return { day, month, year, date };
+}
+
+function formatOfficialDateLine(lugar, dateStr) {
+    const { day, month, year } = parseSpanishDateParts(dateStr);
+    const today = new Date();
+    // Fecha de redacción = hoy; fecha de disfrute es distinta en el cuerpo
+    const redaccion = {
+        day: today.getDate(),
+        month: today.toLocaleDateString('es-ES', { month: 'long' }),
+        year: today.getFullYear()
+    };
+    return {
+        redaccionLine: `EN ${String(lugar || '').toUpperCase()} A ${redaccion.day} DE ${redaccion.month.toUpperCase()} DE ${redaccion.year}`,
+        disfruteParts: { day, month, year }
+    };
+}
+
 function generateDocumentHTML(formData) {
-    const formatDate = (dateStr) => {
-        const date = new Date(dateStr + 'T00:00:00');
-        return date.toLocaleDateString('es-ES', {
-            day: '2-digit',
-            month: 'long',
-            year: 'numeric'
-        });
-    };
-    
-    const getModalidadText = () => {
-        if (formData.modalidad === 'jornada_completa') {
-            return 'TODA LA JORNADA LABORAL';
-        } else {
-            return `DE ${formData.horaInicio || ''} A ${formData.horaFin || ''} HORAS`;
-        }
-    };
-    
+    const { redaccionLine, disfruteParts } = formatOfficialDateLine(formData.lugar, formData.fecha);
+    const jornadaX = formData.modalidad === 'jornada_completa' ? 'X' : '&nbsp;';
+    const tramoX = formData.modalidad === 'tramo_horario' ? 'X' : '&nbsp;';
+    const horaInicio = formData.horaInicio || '________';
+    const horaFin = formData.horaFin || '________';
+    const destinatario = (formData.destinatario || '').toUpperCase();
+
     return `
-        <div class="document-content">
-            <div class="cco-header">
-                <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 100'%3E%3Crect width='400' height='100' fill='%23d32f2f'/%3E%3Ctext x='200' y='35' font-size='24' text-anchor='middle' fill='white' font-family='Arial, sans-serif'%3ECOMISIONS OBRERES%3C/text%3E%3Ctext x='200' y='55' font-size='16' text-anchor='middle' fill='white' font-family='Arial, sans-serif'%3ede l%26apos;Hàbitat del País Valencià%3C/text%3E%3Ctext x='200' y='75' font-size='14' text-anchor='middle' fill='white' font-family='Arial, sans-serif'%3ECCOO HÀBITAT ALICANTE%3C/text%3E%3C/svg%3E" alt="CCOO Hábitat Alicante" style="max-width: 100%; height: auto; margin-bottom: 1rem;">
-                <div class="cco-subtitle">Comunicación de horas sindicales</div>
-            </div>
-            
-            <div class="document-body">
-                <p style="margin-bottom: 1.5rem; text-align: right;">Villajoyosa, ${formatDate(formData.fecha)}</p>
-                
-                <p style="margin-bottom: 1.5rem;">
-                    Por medio del presente escrito, en mi calidad de delegado/a sindical de CCOO en la empresa 
-                    <strong>${formData.empresa}</strong>, y amparado en lo dispuesto en el <strong>Art. 68.e del Estatuto de los Trabajadores</strong> 
-                    y <strong>Ley Orgánica 11/1985</strong>, comunico que voy a hacer uso de horas sindicales retribuidas con el siguiente detalle:
-                </p>
-                
-                <div class="form-field">
-                    <span class="form-label">Delegado/a:</span>
-                    <span class="form-value"><strong>${formData.delegado}</strong></span>
-                </div>
-                
-                <div class="form-field">
-                    <span class="form-label">Empresa:</span>
-                    <span class="form-value">${formData.empresa}</span>
-                </div>
-                
-                <div class="form-field">
-                    <span class="form-label">Fecha:</span>
-                    <span class="form-value">${formatDate(formData.fecha)}</span>
-                </div>
-                
-                <div class="form-field">
-                    <span class="form-label">Modalidad:</span>
-                    <span class="form-value">
-                        <span class="checkbox checked">X</span> ${getModalidadText()}
-                    </span>
-                </div>
-                
-                ${formData.observaciones ? `
-                <div class="form-field">
-                    <span class="form-label">Observaciones:</span>
-                    <span class="form-value">${formData.observaciones}</span>
-                </div>
-                ` : ''}
-                
-                <p style="margin-top: 1.5rem; margin-bottom: 2rem;">
-                    Atentamente,
-                </p>
-                
-                <div class="signature-display">
-                    <div style="text-align: right; margin-bottom: 0.5rem;"><strong>Firma:</strong></div>
-                    ${formData.firma ? `<img src="${formData.firma}" alt="Firma digital" class="signature-image">` : '<div style="min-height: 50px; border-bottom: 1px solid #333; width: 200px; margin-left: auto;"></div>'}
-                </div>
-                
-                <div style="margin-top: 2rem; text-align: right;">
-                    <div><strong>${formData.delegado}</strong></div>
-                    <div style="font-size: 0.9em; color: #666;">Delegado/a Sindical CCOO</div>
+        <div class="document-content official-template">
+            <div class="official-header">
+                <img class="official-logo" src="ccoo-habitat-logo.png" alt="CCOO Hàbitat">
+                <div class="official-header-text">
+                    <div class="official-org">Comissions Obreres del Hàbitat del País Valencià</div>
+                    <div class="official-dept">Secretariat d'Organització</div>
                 </div>
             </div>
-            
-            <div class="legal-footer">
-                <p><strong>Fundamento Legal:</strong></p>
-                <p>Art. 68.e del Estatuto de los Trabajadores: "Los delegados sindicales tendrán derecho a un crédito de horas mensuales retribuidas para el ejercicio de sus funciones sindicales. Dicho crédito será de las horas que se fijen en los convenios colectivos. A falta de pacto, la CONFEDERACIÓN SINDICAL DE COMISIONES OBRERAS tendrán derecho a 8 horas al mes."</p>
-                <p>Ley Orgánica 11/1985, de 2 de agosto, de Libertad Sindical.</p>
+
+            <div class="document-body official-body">
+                <p class="official-place-date">${redaccionLine}</p>
+
+                <p class="official-recipient">A/A ${destinatario}</p>
+
+                <p class="official-name">D/DÑA. <strong>${(formData.delegado || '').toUpperCase()}</strong></p>
+
+                <p class="official-paragraph">
+                    Como representante de los trabajadores/as y/o afiliados/as a CC.OO. en esta Empresa y
+                    para el ejercicio de las funciones que son propias de representación, le comunico que,
+                    el <strong>${disfruteParts.day}</strong> de <strong>${disfruteParts.month}</strong> de
+                    <strong>${disfruteParts.year}</strong>, disfrutaré de mi crédito sindical durante:
+                </p>
+                <p class="official-instruction">(PONER UNA X DONDE PROCEDA)</p>
+
+                <p class="official-option">
+                    <span class="official-x">${jornadaX}</span> Toda la jornada laboral.
+                </p>
+                <p class="official-option">
+                    <span class="official-x">${tramoX}</span> Desde las
+                    <strong>${horaInicio}</strong> h, hasta las <strong>${horaFin}</strong> h.
+                </p>
+
+                <p class="official-paragraph legal-cite">
+                    Todo ello a tenor de lo dispuesto en el TITULO II, Sección Primera del Real Decreto
+                    Legislativo 1/1995, de 24 de Marzo o TITULO IV, Art. 10 de la Ley Orgánica 11/85, de 2 de
+                    agosto, de Libertad Sindical.
+                </p>
+
+                <div class="official-signature">
+                    <div class="fdo-label">Fdo.</div>
+                    ${formData.firma
+                        ? `<img src="${formData.firma}" alt="Firma" class="signature-image">`
+                        : '<div class="signature-line"></div>'}
+                    <div class="fdo-name">${(formData.delegado || '').toUpperCase()}</div>
+                </div>
             </div>
         </div>
     `;
@@ -551,29 +550,28 @@ function sendEmail() {
         }
     };
     
+    const { redaccionLine, disfruteParts } = formatOfficialDateLine(formData.lugar, formData.fecha);
     const emailBody = `
-COMUNICACIÓN DE HORAS SINDICALES - CCOO ACEINSA
+SOLICITUD DE CRÉDITO SINDICAL - CCOO Hàbitat PV
 
-Villajoyosa, ${formatDate(formData.fecha)}
+${redaccionLine}
 
-Por medio del presente escrito, en mi calidad de delegado/a sindical de CCOO en la empresa ${formData.empresa}, y amparado en lo dispuesto en el Art. 68.e del Estatuto de los Trabajadores y Ley Orgánica 11/1985, comunico que voy a hacer uso de horas sindicales retribuidas.
+A/A ${(formData.destinatario || '').toUpperCase()}
 
-Datos de la comunicación:
-- Delegado/a: ${formData.delegado}
-- Empresa: ${formData.empresa}
-- Fecha: ${formatDate(formData.fecha)}
-- Modalidad: ${getModalidadText()}
-${formData.observaciones ? `- Observaciones: ${formData.observaciones}` : ''}
+D/DÑA. ${(formData.delegado || '').toUpperCase()}
 
-Fundamento Legal:
-Art. 68.e del Estatuto de los Trabajadores y Ley Orgánica 11/1985 de Libertad Sindical.
+Como representante de los trabajadores/as y/o afiliados/as a CC.OO. en esta Empresa y para el ejercicio de las funciones que son propias de representación, le comunico que, el ${disfruteParts.day} de ${disfruteParts.month} de ${disfruteParts.year}, disfrutaré de mi crédito sindical durante:
 
-Atentamente,
-${formData.delegado}
-Delegado/a Sindical CCOO
+${formData.modalidad === 'jornada_completa'
+    ? '[X] Toda la jornada laboral.'
+    : `[X] Desde las ${formData.horaInicio || ''} h, hasta las ${formData.horaFin || ''} h.`}
+
+Todo ello a tenor de lo dispuesto en el TITULO II, Sección Primera del Real Decreto Legislativo 1/1995, de 24 de Marzo o TITULO IV, Art. 10 de la Ley Orgánica 11/85, de 2 de agosto, de Libertad Sindical.
+
+Fdo. ${formData.delegado}
 
 ---
-Documento generado desde la PWA de Gestión de Horas Sindicales CCOO ACEINSA
+Plantilla oficial CCOO Hábitat PV · ACEINSA Conservación Villajoyosa
 `;
     
     // Codificar el cuerpo y asunto
@@ -611,20 +609,20 @@ function shareViaWhatsApp() {
         }
     };
     
+    const { redaccionLine, disfruteParts } = formatOfficialDateLine(formData.lugar, formData.fecha);
     const message = `
-📋 COMUNICACIÓN DE HORAS SINDICALES - CCOO ACEINSA
+SOLICITUD CRÉDITO SINDICAL - CCOO Hàbitat PV
 
-📍 Villajoyosa, ${formatDate(formData.fecha)}
+${redaccionLine}
+A/A ${(formData.destinatario || '').toUpperCase()}
+D/DÑA. ${formData.delegado}
 
-Delegado/a: ${formData.delegado}
-Empresa: ${formData.empresa}
-Fecha: ${formatDate(formData.fecha)}
-Modalidad: ${getModalidadText()}
-${formData.observaciones ? `Observaciones: ${formData.observaciones}` : ''}
+Disfrute: ${disfruteParts.day} de ${disfruteParts.month} de ${disfruteParts.year}
+${formData.modalidad === 'jornada_completa'
+    ? 'Modalidad: Toda la jornada laboral'
+    : `Modalidad: Desde las ${formData.horaInicio} h hasta las ${formData.horaFin} h`}
 
-Amparado en el Art. 68.e del ET y LO 11/1985.
-
-Generado desde PWA CCOO ACEINSA
+Fundamento: RD Leg. 1/1995 y LO 11/85
 `;
     
     const encodedMessage = encodeURIComponent(message);

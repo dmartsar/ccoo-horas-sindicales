@@ -1,17 +1,16 @@
 // Service Worker para PWA de Horas Sindicales CCOO
 // Estrategia: Network-First con fallback a caché
 
-const CACHE_NAME = 'horas-sindicales-v1';
+const CACHE_NAME = 'horas-sindicales-v2-plantilla-oficial';
 const ASSETS_TO_CACHE = [
-    '/',
-    '/index.html',
-    '/styles.css',
-    '/app.js',
-    '/manifest.json',
-    '/icon.svg',
-    '/generate-icons.html',
-    'https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap',
-    'data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 100 100\'%3E%3Ccircle cx=\'50\' cy=\'50\' r=\'45\' fill=\'%23d32f2f\'/%3E%3Ctext x=\'50\' y=\'60\' font-size=\'30\' text-anchor=\'middle\' fill=\'white\' font-family=\'Arial, sans-serif\'%3ECCOO%3C/text%3E%3C/svg%3E'
+    './',
+    './index.html',
+    './styles.css',
+    './app.js',
+    './manifest.json',
+    './icon.svg',
+    './ccoo-habitat-logo.png',
+    './sw.js'
 ];
 
 // Instalación: Guardar assets en caché
